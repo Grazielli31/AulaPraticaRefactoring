@@ -1,11 +1,11 @@
-import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Enumeration;
 
 public class Customer {
     private String _name;
     private Vector _rentals = new Vector();
 
-    public Customer(String name){
+    public Customer(String name) {
         _name = name;
     }
 
@@ -17,38 +17,8 @@ public class Customer {
         return _name;
     }
 
-    public String statement() {
-        double totalAmount = 0;
-        int frequentRenterPoints = 0;
-        Enumeration rentals = _rentals.elements();
-        String result = "Rental Record for " + getName() + "\n";
-        while (rentals.hasMoreElements()) {
-            Rental each = (Rental) rentals.nextElement();
-            frequentRenterPoints += each.getFrequentRenterPoints();
-            result += "\t" + each.getMovie().getTitle() + "\t" + 
-                      String.valueOf(each.getCharge()) + "\n";
-            totalAmount += each.getCharge();
-        }
-        result +=  "Amount owed is " + String.valueOf(totalAmount) + "\n";
-        result += "You earned " + String.valueOf(frequentRenterPoints) +
-                  " frequent renter points";
-        return result;
-    }
-
-    public String htmlStatement() {
-        Enumeration rentals = _rentals.elements();
-        String result = "<H1>Rentals for <EM>" + getName() + "</EM></H1><P>\n";
-        while (rentals.hasMoreElements()) {
-            Rental each = (Rental) rentals.nextElement();
-            result += each.getMovie().getTitle() + ": " +
-                      String.valueOf(each.getCharge()) + "<BR>\n";
-        }
-        result += "<P>You owe <EM>" + String.valueOf(getTotalCharge()) + 
-                  "</EM><P>\n";
-        result += "On this rental you earned <EM>" +
-                  String.valueOf(getTotalFrequentRenterPoints()) +
-                  "</EM> frequent renter points<P>";
-        return result;
+    public Enumeration getRentals() {
+        return _rentals.elements();
     }
 
     public double getTotalCharge() {
@@ -69,5 +39,13 @@ public class Customer {
             result += each.getFrequentRenterPoints();
         }
         return result;
+    }
+
+    public String statement() {
+        return new TextStatement().value(this);
+    }
+
+    public String htmlStatement() {
+        return new HtmlStatement().value(this);
     }
 }
