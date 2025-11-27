@@ -1,42 +1,46 @@
-public String statement() {
-     double totalAmount = 0;
-     int frequentRenterPoints = 0;
-     Enumeration rentals = _rentals.elements();
-     String result = "Rental Record for " + getName() + "\n";
-     while (rentals.hasMoreElements()) {
-        Rental each = (Rental) rentals.nextElement();
-        double thisAmount = amountFor(each); // substituído
+public class Movie {
 
-        frequentRenterPoints ++;
-        if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) &&
-            each.getDaysRented() > 1) frequentRenterPoints ++;
+    public static final int CHILDRENS = 2;
+    public static final int REGULAR = 0;
+    public static final int NEW_RELEASE = 1;
 
-        result += "\t" + each.getMovie().getTitle()+ "\t" +
-            String.valueOf(thisAmount) + "\n";
-        totalAmount += thisAmount;
-     }
-     result +=  "Amount owed is " + String.valueOf(totalAmount) + "\n";
-     result += "You earned " + String.valueOf(frequentRenterPoints) +
-             " frequent renter points";
-     return result;
-}
+    private String _title;
+    private Price _price;
 
-private double amountFor(Rental each) {
-    double result = 0;
-    switch (each.getMovie().getPriceCode()) {
-       case Movie.REGULAR:
-          result += 2;
-          if (each.getDaysRented() > 2)
-             result += (each.getDaysRented() - 2) * 1.5;
-          break;
-       case Movie.NEW_RELEASE:
-          result += each.getDaysRented() * 3;
-          break;
-       case Movie.CHILDRENS:
-          result += 1.5;
-          if (each.getDaysRented() > 3)
-             result += (each.getDaysRented() - 3) * 1.5;
-           break;
+    public Movie(String title, int priceCode) {
+        _title = title;
+        setPriceCode(priceCode);
     }
-    return result;
+
+    public String getTitle() {
+        return _title;
+    }
+
+    public int getPriceCode() {
+        return _price.getPriceCode();
+    }
+
+    public void setPriceCode(int arg) {
+        switch (arg) {
+            case REGULAR:
+                _price = new RegularPrice();
+                break;
+            case CHILDRENS:
+                _price = new ChildrensPrice();
+                break;
+            case NEW_RELEASE:
+                _price = new NewReleasePrice();
+                break;
+            default:
+                throw new IllegalArgumentException("Incorrect Price Code");
+        }
+    }
+
+    public double getCharge(int daysRented) {
+        return _price.getCharge(daysRented);
+    }
+
+    public int getFrequentRenterPoints(int daysRented) {
+        return _price.getFrequentRenterPoints(daysRented);
+    }
 }
